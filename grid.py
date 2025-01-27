@@ -12,14 +12,14 @@ class Grid:
 
     def draw(self, window):
         # Loop through all columns and rows of the grid
-        for i in range(self.cols):
-            for j in range(self.rows):
+        for i in range(self.rows):
+            for j in range(self.cols):
 
                 # Choose color based on the cell state
-                if (self.cells_grid[j][i] == 0):
+                if (self.cells_grid[i][j] == 0):
                     color = colors.BLACK
                 else:
                     color = colors.WHITE
 
                 # Draw the cell as a rectangle with a slight gap for grid lines
-                pygame.draw.rect(window, color, (i* self.cell_size, j *self.cell_size, self.cell_size-1, self.cell_size-1))
+                pygame.draw.rect(window, color, (j* self.cell_size, i *self.cell_size, self.cell_size-1, self.cell_size-1))

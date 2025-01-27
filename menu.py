@@ -23,6 +23,7 @@ class App:
 
         # Create an instance of the Grid class
         self.grid = Grid(self.WINDOW_WIDTH, self.WINDOW_HEIGHT,self.cell_size)
+        self.grid.cells_grid[0][2] = 1
 
 
     def run(self):
@@ -39,7 +40,7 @@ class App:
 
             # Draw the grid onto the screen
             self.grid.draw(self.screen)
-            
+
             # Update the display and maintain the FPS
             pygame.display.update()
             self.clock.tick(self.FPS)

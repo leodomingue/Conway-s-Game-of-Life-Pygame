@@ -44,7 +44,8 @@ class App:
     def __init__(self):
         #dimensions
         self.WINDOW_WIDTH = 800
-        self.WINDOW_HEIGHT = 800
+        self.WINDOW_HEIGHT = 810
+        self.INTERFACE_HEIGHT = 50
 
         # Initialize the game window and clock
         self.screen =  pygame.display.set_mode((self.WINDOW_WIDTH, self.WINDOW_HEIGHT))
@@ -54,10 +55,10 @@ class App:
         self.FPS = 60
 
         # Grid cell size
-        self.cell_size = 20
+        self.cell_size = 10
 
         # Create an instance of the Grid class
-        self.grid = Engine(self.WINDOW_WIDTH, self.WINDOW_HEIGHT,self.cell_size)
+        self.grid = Engine(self.WINDOW_WIDTH, self.WINDOW_HEIGHT - self.INTERFACE_HEIGHT,self.cell_size, self.INTERFACE_HEIGHT)
 
 
 
@@ -121,7 +122,8 @@ class App:
                         self.grid.clear()
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    self.grid.handle_mouse_click(MOUSE_POS)
+                    adjusted_mouse_pos = (MOUSE_POS[0], MOUSE_POS[1] - self.INTERFACE_HEIGHT)
+                    self.grid.handle_mouse_click(adjusted_mouse_pos)
 
 
             self.grid.update()
@@ -129,7 +131,8 @@ class App:
             # Draw the grid onto the screen
             self.grid.draw(self.screen)
 
-            self.grid.handle_mouse_no_click(self.screen, MOUSE_POS)
+            adjusted_mouse_pos = (MOUSE_POS[0], MOUSE_POS[1] - self.INTERFACE_HEIGHT)
+            self.grid.handle_mouse_no_click(self.screen, adjusted_mouse_pos)
 
             # Update the display and maintain the FPS
             pygame.display.update()

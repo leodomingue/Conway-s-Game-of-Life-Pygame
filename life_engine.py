@@ -2,15 +2,17 @@ from grid import Grid
 import COLORS as colors
 import pygame
 class Engine:
-    def __init__(self, width, height, cell_size):
-        self.grid = Grid(width,height,cell_size)
+    def __init__(self, width, height, cell_size, interface_height):
+        self.grid = Grid(width,height,cell_size, interface_height)
         self.cells_grid = self.grid.cells_grid
         self.rows = len(self.cells_grid)
         self.cols = len(self.cells_grid[0])
         self.cell_size = cell_size
         self.running = False
 
+
         self.temp_grid = [[0 for _ in range(self.cols)] for _ in range(self.rows)]
+        self.interface_height = interface_height
         
     def draw(self, window):
         self.grid.draw(window)
@@ -85,4 +87,4 @@ class Engine:
         row = mouse_pos[1] // self.cell_size
 
         if 0 <= row < self.rows and 0 <= col < self.cols:
-            pygame.draw.rect(window, colors.GRAY, (col* self.cell_size, row *self.cell_size, self.cell_size-1, self.cell_size-1))
+            pygame.draw.rect(window, colors.GRAY, (col* self.cell_size, row *self.cell_size+self.interface_height, self.cell_size-1, self.cell_size-1))

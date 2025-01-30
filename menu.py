@@ -1,8 +1,6 @@
 import pygame
 import COLORS as colors
-from grid import Grid
-
-
+from life_engine import Engine
 
 
 class App:
@@ -16,14 +14,24 @@ class App:
         self.clock = pygame.time.Clock()
 
         #frames
-        self.FPS = 60
+        self.FPS = 10
 
         # Grid cell size
-        self.cell_size = 40
+        self.cell_size = 20
 
         # Create an instance of the Grid class
-        self.grid = Grid(self.WINDOW_WIDTH, self.WINDOW_HEIGHT,self.cell_size)
-        self.grid.cells_grid[0][2] = 1
+        self.grid = Engine(self.WINDOW_WIDTH, self.WINDOW_HEIGHT,self.cell_size)
+        self.grid.cells_grid[1][8] = 1
+        self.grid.cells_grid[1][9] = 1
+        self.grid.cells_grid[1][10] = 1
+
+        self.grid.cells_grid[2][8] = 1
+        self.grid.cells_grid[2][10] = 1
+        self.grid.cells_grid[3][8] = 1
+        self.grid.cells_grid[3][9] = 1
+        self.grid.cells_grid[3][10] = 1
+
+        self.grid.cells_grid[2][9] = 1
 
 
     def run(self):
@@ -37,6 +45,8 @@ class App:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
+
+            self.grid.update()
 
             # Draw the grid onto the screen
             self.grid.draw(self.screen)

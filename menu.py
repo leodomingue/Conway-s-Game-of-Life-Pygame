@@ -2,55 +2,32 @@ import pygame
 import COLORS as colors
 from life_engine import Engine
 
-
-class App:
-    def __init__(self):
-        #dimensions
-        self.WINDOW_WIDTH = 800
-        self.WINDOW_HEIGHT = 800
-
-        # Initialize the game window and clock
-        self.screen =  pygame.display.set_mode((self.WINDOW_WIDTH, self.WINDOW_HEIGHT))
-        self.clock = pygame.time.Clock()
-
-        #frames
-        self.FPS = 10
-
-        # Grid cell size
-        self.cell_size = 20
-
-        # Create an instance of the Grid class
-        self.grid = Engine(self.WINDOW_WIDTH, self.WINDOW_HEIGHT,self.cell_size)
-        self.grid.cells_grid[1][8] = 1
-        self.grid.cells_grid[1][9] = 1
-        self.grid.cells_grid[1][10] = 1
-
-        self.grid.cells_grid[2][8] = 1
-        self.grid.cells_grid[2][10] = 1
-        self.grid.cells_grid[3][8] = 1
-        self.grid.cells_grid[3][9] = 1
-        self.grid.cells_grid[3][10] = 1
-
-        self.grid.cells_grid[2][9] = 1
+class Button:
+    def __init__(self, app, x_pos, y_pos, text_input):
+        self.font = pygame.font.Font("assets/font/PressStart2P-Regular.ttf", 45)
+        self.app = app
+        self.image = pygame.image.load("assets/buttons/button.png").convert_alpha()
+        self.image = pygame.transform.scale(self.image, (400, 150))
+        self.x_pos = x_pos
+        self.y_pos = y_pos
+        self.rect = self.image.get_rect(center=(self.x_pos, self.y_pos))
+        self.text_input = text_input
+        self.text = self.font.render(self.text_input, False, "white")
+        self.text_rect = self.text.get_rect(center=(self.x_pos, self.y_pos))
+        
+    def update_image(self):
+        self.app.screen.blit(self.image, self.rect)
+        self.app.screen.blit(self.text, self.text_rect)
+        
+    def check_input(self, position_mouse):
+        if position_mouse[0] in range(self.rect.left, self.rect.right) and position_mouse[1] in range(self.rect.top, self.rect.bottom):
+            return True
+        return False
+    
+    def change_color(self, position_mouse):
+        if position_mouse[0] in range(self.rect.left, self.rect.right) and position_mouse[1] in range(self.rect.top, self.rect.bottom):
+            self.text = self.font.render(self.text_input, True, "Black")
+        else:
+            self.text = self.font.render(self.text_input, True, "White")
 
 
-    def run(self):
-        # Main game loop
-        while True:
-            # Fill the screen with a background color
-            self.screen.fill(colors.GRAY)
-            
-             # Handle events
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    exit()
-
-            self.grid.update()
-
-            # Draw the grid onto the screen
-            self.grid.draw(self.screen)
-
-            # Update the display and maintain the FPS
-            pygame.display.update()
-            self.clock.tick(self.FPS)

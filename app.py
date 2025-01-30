@@ -55,7 +55,7 @@ class App:
         self.FPS = 60
 
         # Grid cell size
-        self.cell_size = 10
+        self.cell_size = 20
 
         # Create an instance of the Grid class
         self.grid = Engine(self.WINDOW_WIDTH, self.WINDOW_HEIGHT - self.INTERFACE_HEIGHT,self.cell_size, self.INTERFACE_HEIGHT)
@@ -120,6 +120,9 @@ class App:
                             self.FPS = 10
                     if event.key == pygame.K_ESCAPE:
                         self.grid.clear()
+                        if self.grid.is_running() == False:
+                            self.grid.start()
+                            self.grid.stop()
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     adjusted_mouse_pos = (MOUSE_POS[0], MOUSE_POS[1] - self.INTERFACE_HEIGHT)

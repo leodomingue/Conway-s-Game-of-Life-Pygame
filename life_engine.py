@@ -23,16 +23,22 @@ class Engine:
         else:
             return True
 
-    def count_live_cells_neighbors(self, row_pos, col_pos):
-        total_neighbors = 0
+    def count_live_cells_neighbors(self, row, col):
+        live_neighbors = 0
 
-        possible_neighbors = [(0,1),(0,-1),(1,0),(-1,0),(1,1),(-1,-1),(1,-1),(-1,1)]
+        for i in range(-1, 2):
+            for j in range(-1, 2):  
+                if i == 0 and j == 0:
+                    continue 
 
-        for neighbor in possible_neighbors:
-            neighbor_pos = (row_pos + neighbor[0], col_pos + neighbor[1])
-            if (self.valid_position(neighbor_pos) and self.cells_grid[neighbor_pos[0]][neighbor_pos[1]] ==1):
-                total_neighbors += 1
-        return total_neighbors
+                
+                neighbor_row = (row + i) % self.rows
+                neighbor_col = (col + j) % self.cols
+
+              
+                live_neighbors += self.cells_grid[neighbor_row][neighbor_col]
+
+        return live_neighbors
     
     def update(self):
         if self.is_running():

@@ -51,24 +51,14 @@ class App:
         self.clock = pygame.time.Clock()
 
         #frames
-        self.FPS = 10
+        self.FPS = 60
 
         # Grid cell size
         self.cell_size = 20
 
         # Create an instance of the Grid class
         self.grid = Engine(self.WINDOW_WIDTH, self.WINDOW_HEIGHT,self.cell_size)
-        self.grid.cells_grid[1][8] = 1
-        self.grid.cells_grid[1][9] = 1
-        self.grid.cells_grid[1][10] = 1
 
-        self.grid.cells_grid[2][8] = 1
-        self.grid.cells_grid[2][10] = 1
-        self.grid.cells_grid[3][8] = 1
-        self.grid.cells_grid[3][9] = 1
-        self.grid.cells_grid[3][10] = 1
-
-        self.grid.cells_grid[2][9] = 1
 
 
     def run(self):
@@ -101,6 +91,7 @@ class App:
             
 
             pygame.display.update()
+            self.clock.tick(self.FPS)
 
 
 
@@ -109,6 +100,8 @@ class App:
         while True:
             # Fill the screen with a background color
             self.screen.fill(colors.GRAY)
+
+            MOUSE_POS = pygame.mouse.get_pos()
             
              # Handle events
             for event in pygame.event.get():
@@ -116,10 +109,27 @@ class App:
                     pygame.quit()
                     exit()
 
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        if self.grid.is_running():
+                            self.grid.stop()
+                            self.FPS = 60
+                        else:
+                            self.grid.start()
+                            self.FPS = 10
+                    if event.key == pygame.K_ESCAPE:
+                        self.grid.clear()
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    self.grid.handle_mouse_click(MOUSE_POS)
+
+
             self.grid.update()
 
             # Draw the grid onto the screen
             self.grid.draw(self.screen)
+
+            self.grid.handle_mouse_no_click(self.screen, MOUSE_POS)
 
             # Update the display and maintain the FPS
             pygame.display.update()

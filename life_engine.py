@@ -2,7 +2,12 @@ from grid import Grid
 import COLORS as colors
 import pygame
 class Engine:
+
+    """This class handles the logic for Conway's Game of Life."""
+
     def __init__(self, width, height, cell_size, interface_height):
+        #Initializes the simulation engine.
+
         self.grid = Grid(width,height,cell_size, interface_height)
         self.cells_grid = self.grid.cells_grid
         self.rows = len(self.cells_grid)
@@ -15,15 +20,11 @@ class Engine:
         self.interface_height = interface_height
         
     def draw(self, window):
+        #Draws the grid on the given window.
         self.grid.draw(window)
 
-    def valid_position(self, position):
-        if position[0] < 0 or position[0] >= self.rows or position[1] < 0 or position[1] >= self.cols:
-            return False
-        else:
-            return True
-
     def count_live_cells_neighbors(self, row, col):
+        #Counts the number of live neighbors for a given cell
         live_neighbors = 0
 
         for i in range(-1, 2):
@@ -42,13 +43,12 @@ class Engine:
     
     def update(self):
         if self.is_running():
-            """Update the grid based on the Game of Life rules."""
+            #Updates the grid state according to Conway's Game of Life rules.
             for row in range(self.rows):
                 for col in range(self.cols):
                     neighbors = self.count_live_cells_neighbors(row, col)
                     cell_value = self.cells_grid[row][col]
 
-                    # Apply the Game of Life rules
                     if cell_value == 1:
                         if neighbors < 2 or neighbors > 3:
                             self.temp_grid[row][col] = 0  # Cell dies
@@ -64,6 +64,7 @@ class Engine:
             self.cells_grid, self.temp_grid = self.temp_grid, self.cells_grid
 
     def is_running(self):
+        #Checks if the simulation is currently running.
         return self.running
 
     def start(self):
@@ -73,11 +74,13 @@ class Engine:
         self.running = False
 
     def clear(self):
+        #Clears the grid, setting all cells to dead (0).
         for row in range(self.rows):
             for col in range(self.cols):
                 self.cells_grid[row][col] = 0
 
     def handle_mouse_click(self, mouse_pos):
+        # Handles user clicks on the grid, toggling the state of the clicked cell
         col = mouse_pos[0] // self.cell_size
         row = mouse_pos[1] // self.cell_size
 
@@ -89,6 +92,7 @@ class Engine:
                 self.cells_grid[row][col] = 1
 
     def handle_mouse_no_click(self,window, mouse_pos):
+        #Highlights the cell under the mouse pointer without clicking
         col = mouse_pos[0] // self.cell_size
         row = mouse_pos[1] // self.cell_size
 

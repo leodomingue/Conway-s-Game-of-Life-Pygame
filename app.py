@@ -1,5 +1,4 @@
 import pygame
-import sys
 import COLORS as colors
 from life_engine import Engine
 
@@ -7,6 +6,8 @@ from life_engine import Engine
 pygame.init()
 
 class Button:
+    """Represents a button with text that changes color when hovered."""
+
     def __init__(self, app, x_pos, y_pos, text_input):
         self.font = pygame.font.Font("assets/font/PressStart2P-Regular.ttf", 35)
         self.app = app
@@ -20,15 +21,18 @@ class Button:
         self.text_rect = self.text.get_rect(center=(self.x_pos, self.y_pos))
         
     def update_image(self):
+        """Draws the button and its text on the screen."""
         self.app.screen.blit(self.image, self.rect)
         self.app.screen.blit(self.text, self.text_rect)
         
     def check_input(self, position_mouse):
+        """Checks if the mouse is hovering over the button."""
         if position_mouse[0] in range(self.rect.left, self.rect.right) and position_mouse[1] in range(self.rect.top, self.rect.bottom):
             return True
         return False
     
     def change_color(self, position_mouse):
+        """Changes text color when hovered."""
         if position_mouse[0] in range(self.rect.left, self.rect.right) and position_mouse[1] in range(self.rect.top, self.rect.bottom):
             self.text = self.font.render(self.text_input, True, "Black")
         else:
@@ -41,8 +45,10 @@ class Button:
 
 
 class App:
+    """Main application that initializes the game and handles user interactions."""
+
     def __init__(self):
-        #dimensions
+        #Window dimensions
         self.WINDOW_WIDTH = 800
         self.WINDOW_HEIGHT = 810
         self.INTERFACE_HEIGHT = 50
@@ -51,7 +57,7 @@ class App:
         self.screen =  pygame.display.set_mode((self.WINDOW_WIDTH, self.WINDOW_HEIGHT))
         self.clock = pygame.time.Clock()
 
-        #frames
+        #Frames
         self.FPS = 60
 
         # Grid cell size
@@ -63,19 +69,21 @@ class App:
 
 
     def run(self):
+        """Runs the main menu loop."""
         while True:
             self.screen.fill(colors.BLACK)
             MOUSE_POS = pygame.mouse.get_pos()
 
-
-            PLAY_BUTTON = Button(self, 400, 200, "Simular")
-            OPTIONS_BUTTON = Button(self, 400, 400, "Opciones")
-            QUIT_BUTTON = Button(self, 400, 600, "Salir")
+            # Create buttons
+            PLAY_BUTTON = Button(self, 400, 200, "Simulate")
+            OPTIONS_BUTTON = Button(self, 400, 400, "Optiones")
+            QUIT_BUTTON = Button(self, 400, 600, "Exit")
 
             for button in [PLAY_BUTTON, OPTIONS_BUTTON, QUIT_BUTTON]:
                 button.change_color(MOUSE_POS)
                 button.update_image()
 
+            # Handle events
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -97,14 +105,13 @@ class App:
 
 
     def run_simulation(self):
-        # Main game loop
+        """Runs the Game of Life simulation."""
         while True:
-            # Fill the screen with a background color
             self.screen.fill(colors.GRAY)
 
             MOUSE_POS = pygame.mouse.get_pos()
             
-             # Handle events
+            # Handle events
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()

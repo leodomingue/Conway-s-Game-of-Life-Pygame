@@ -43,6 +43,7 @@ class Engine:
     
     def update(self):
         if self.is_running():
+
             #Updates the grid state according to Conway's Game of Life rules.
             for row in range(self.rows):
                 for col in range(self.cols):
@@ -61,7 +62,9 @@ class Engine:
                             self.temp_grid[row][col] = 0  # Cell stays dead
 
             # Swap the grids
-            self.cells_grid, self.temp_grid = self.temp_grid, self.cells_grid
+            for row in range(self.rows):
+                for col in range(self.cols):
+                    self.cells_grid[row][col] = self.temp_grid[row][col]
 
     def is_running(self):
         #Checks if the simulation is currently running.

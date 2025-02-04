@@ -1,6 +1,7 @@
 from grid import Grid
 import COLORS as colors
 import pygame
+import random
 class Engine:
 
     """This class handles the logic for Conway's Game of Life."""
@@ -101,3 +102,8 @@ class Engine:
 
         if 0 <= row < self.rows and 0 <= col < self.cols:
             pygame.draw.rect(window, colors.GRAY, (col* self.cell_size, row *self.cell_size+self.interface_height, self.cell_size-1, self.cell_size-1))
+
+    def randomize(self):
+        for row in range(self.rows):
+            for col in range(self.cols):
+                self.cells_grid[row][col] = random.choice([0, 1])

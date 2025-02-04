@@ -9,10 +9,11 @@ import bloom
 
 pygame.init()
 
+
 class Button_Interface:
     """Represents a button """
 
-    def __init__(self, app, x_pos, y_pos, image_path):
+    def __init__(self, app, x_pos, y_pos, image_path, on_click=None):
         self.app = app
         self.x_pos = x_pos
         self.y_pos = y_pos
@@ -22,6 +23,7 @@ class Button_Interface:
         self.image_hover = pygame.transform.scale(self.image_hover, (50, 40))
         self.rect = self.image.get_rect(topleft=(self.x_pos, self.y_pos))
         self.is_hovered = False
+        self.on_click = on_click
 
 
     def update_image(self):
@@ -35,11 +37,8 @@ class Button_Interface:
         """Changes text color when hovered."""
         self.is_hovered = self.rect.collidepoint(position_mouse)
 
-    def handle_click(self, position_mouse):
-        """Handles the button click event."""
-        if self.rect.collidepoint(position_mouse): 
-            print("a")
-
+    def handle_click(self):
+        self.on_click()
 
 
 
@@ -91,9 +90,7 @@ class Button:
             self.text_color = colors.WHITE 
             self.border_color = colors.WHITE
 
-
-
-
+        
 
 
 
@@ -121,9 +118,47 @@ class App:
 
         self.font = pygame.font.Font("assets/font/PressStart2P-Regular.ttf", 20)
 
+    def create_interface(self):
+        pygame.draw.rect(self.screen, colors.BLACK, (0, 0, self.WINDOW_WIDTH, self.INTERFACE_HEIGHT))
+
+        text_input =  "Conway Game Life"
+        text = self.font.render(text_input, False, "WHITE")
+        text_rect = text.get_rect(center=(self.WINDOW_WIDTH//2, self.INTERFACE_HEIGHT//2))
+        self.screen.blit(text, text_rect)
+
+    def toggle_simulation(self):
+        if self.grid.is_running():
+            self.grid.stop()
+            self.FPS = 60
+        else:
+            self.grid.start()
+            self.FPS = 12
+
+    def clear_simulation(self):
+        self.grid.clear()
+        if self.grid.is_running() == True:
+            self.grid.start()
+            self.grid.stop()
+            self.FPS = 60
+
+    def back_menu(self):
+        self.FPS = 60
+        self.grid.stop()
+        self.clear_simulation()
+        return False
+    
+    def nothing():
+        print("a")
+
+    def random_grid(self):
+        self.grid.stop()
+        self.grid.randomize()
+
+
     def run(self):
         """Runs the main menu loop."""
-        while True:
+        menu = True
+        while menu:
             self.screen.fill(colors.BLACK)
             MOUSE_POS = pygame.mouse.get_pos()
 
@@ -155,19 +190,12 @@ class App:
             pygame.display.update()
             self.clock.tick(self.FPS)
 
-    def create_interface(self):
-        pygame.draw.rect(self.screen, colors.BLACK, (0, 0, self.WINDOW_WIDTH, self.INTERFACE_HEIGHT))
-
-        text_input =  "Conway Game Life"
-        text = self.font.render(text_input, False, "WHITE")
-        text_rect = text.get_rect(center=(self.WINDOW_WIDTH//2, self.INTERFACE_HEIGHT//2))
-        self.screen.blit(text, text_rect)
-
 
 
     def run_simulation(self):
         """Runs the Game of Life simulation."""
-        while True:
+        simulation_running = True
+        while simulation_running:
             self.screen.fill(colors.GRAY)
             self.create_interface()
 
@@ -176,9 +204,9 @@ class App:
 
             #Create buttons
             MORE_BUTTON = Button_Interface(self, 750, 0, "assets/more/more")
-            RANDOM_BUTTON = Button_Interface(self, 650, 0, "assets/random/random")
-            BACK_BUTTON = Button_Interface(self, 0, 0, "assets/back/back")
-            CLEAR_BUTTON = Button_Interface(self, 100, 0, "assets/clear/clear")
+            RANDOM_BUTTON = Button_Interface(self, 650, 0, "assets/random/random", self.random_grid)
+            BACK_BUTTON = Button_Interface(self, 0, 0, "assets/back/back", self.back_menu)
+            CLEAR_BUTTON = Button_Interface(self, 100, 0, "assets/clear/clear", self.clear_simulation)
 
 
             for button in [MORE_BUTTON,RANDOM_BUTTON,BACK_BUTTON,CLEAR_BUTTON]:
@@ -193,26 +221,24 @@ class App:
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
-                        if self.grid.is_running():
-                            self.grid.stop()
-                            self.FPS = 60
-                        else:
-                            self.grid.start()
-                            self.FPS = 12
+                        self.toggle_simulation()
+
                     if event.key == pygame.K_ESCAPE:
-                        self.grid.clear()
-                        if self.grid.is_running() == False:
-                            self.grid.start()
-                            self.grid.stop()
+                        simulation_running = self.back_menu()
+
  
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if MOUSE_POS[1] <50:
                         for button in [MORE_BUTTON,RANDOM_BUTTON,BACK_BUTTON,CLEAR_BUTTON]:
-                            button.handle_click(MOUSE_POS)
+                            if button.rect.collidepoint(MOUSE_POS):
+                                if button == BACK_BUTTON:
+                                    simulation_running = button.handle_click()
+                                else:
+                                    button.handle_click()
                     else:
                         adjusted_mouse_pos = (MOUSE_POS[0], MOUSE_POS[1] - self.INTERFACE_HEIGHT)
                         self.grid.handle_mouse_click(adjusted_mouse_pos)
-
+ 
 
             self.grid.update()
 

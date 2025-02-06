@@ -6,10 +6,12 @@ class Engine:
 
     """This class handles the logic for Conway's Game of Life."""
 
-    def __init__(self, width, height, cell_size, interface_height):
+    def __init__(self, width, height, cell_size, interface_height, live_cell_color, dead_cell_color):
         #Initializes the simulation engine.
 
-        self.grid = Grid(width,height,cell_size, interface_height)
+        self.live_cell_color = live_cell_color
+        self.dead_cell_color = dead_cell_color
+        self.grid = Grid(width,height,cell_size, interface_height, self.live_cell_color, self.dead_cell_color)
         self.cells_grid = self.grid.cells_grid
         self.rows = len(self.cells_grid)
         self.cols = len(self.cells_grid[0])
@@ -17,9 +19,20 @@ class Engine:
         self.running = False
 
 
+
         self.temp_grid = [[0 for _ in range(self.cols)] for _ in range(self.rows)]
         self.interface_height = interface_height
         
+
+
+    def set_live_cell_color(self, new_color):
+        self.live_cell_color = new_color
+        self.grid.set_live_cell_color(new_color) 
+
+    def set_dead_cell_color(self, new_color):
+        self.dead_cell_color = new_color
+        self.grid.set_dead_cell_color(new_color) 
+    
     def draw(self, window):
         #Draws the grid on the given window.
         self.grid.draw(window)

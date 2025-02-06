@@ -9,6 +9,8 @@ import bloom
 
 pygame.init()
 
+color_dict = {name: value for name, value in vars(colors).items() if isinstance(value, tuple)}
+color_list = list(color_dict.values())
 
 class Button_Interface:
     """Represents a button """
@@ -111,10 +113,13 @@ class App:
         self.FPS = 60
 
         # Grid cell size
-        self.cell_size = 20
+        self.cell_size = 10
+
+        self.live_cell_color = colors.WHITE
+        self.dead_cell_color = colors.BLACK
 
         # Create an instance of the Grid class
-        self.grid = Engine(self.WINDOW_WIDTH, self.WINDOW_HEIGHT - self.INTERFACE_HEIGHT,self.cell_size, self.INTERFACE_HEIGHT)
+        self.grid = Engine(self.WINDOW_WIDTH, self.WINDOW_HEIGHT - self.INTERFACE_HEIGHT,self.cell_size, self.INTERFACE_HEIGHT, self.live_cell_color, self.dead_cell_color)
 
         self.font = pygame.font.Font("assets/font/PressStart2P-Regular.ttf", 20)
 
@@ -190,6 +195,73 @@ class App:
             pygame.display.update()
             self.clock.tick(self.FPS)
 
+    def draw_palette(self, screen):
+        color_dict = {name: value for name, value in vars(colors).items() if isinstance(value, tuple)}
+        color_list = list(color_dict.values())
+        for i, color in enumerate(color_list):
+            pygame.draw.rect(screen, color, (10 + i * 50, 90, 40, 40))
+            pygame.draw.rect(screen, color, (10 + i * 50, 500, 40, 40))
+
+    def options_game(self):
+        options_menu = True
+        while options_menu:
+            self.screen.fill((64, 64, 64))
+
+            MOUSE_POS = pygame.mouse.get_pos()
+            BACK_BUTTON = Button_Interface(self, 0, 0, "assets/back/back")
+
+            self.draw_palette(self.screen)
+            
+            #Titles
+
+            text_input_live =  "Live Cells Color: "
+            text_live = self.font.render(text_input_live, False, "WHITE")
+            text_rect_live = text_live.get_rect(topleft=(10, 60))
+            self.screen.blit(text_live, text_rect_live)
+
+            text_input_dead =  "Dead Cells Color: "
+            text_dead = self.font.render(text_input_dead, False, "WHITE")
+            text_rect_dead = text_dead.get_rect(topleft=(10, 470))
+            self.screen.blit(text_dead, text_rect_dead)
+            
+            
+            pygame.draw.rect(self.screen, self.live_cell_color, (text_rect_live.right-10,  text_rect_live.centery - 40 // 2-10, 40, 40))
+            pygame.draw.rect(self.screen, self.dead_cell_color, (text_rect_dead.right-10,  text_rect_dead.centery - 40 // 2-10, 40, 40))
+
+            for i, color in enumerate(color_list):
+                            if 10 + i * 50 <= MOUSE_POS[0] <= 50 + i * 50 and 90 <= MOUSE_POS[1] <= 130:
+                                pygame.draw.rect(self.screen, self.live_cell_color, (10 + i * 50, 90, 40, 40), 5)
+                            if 10 + i * 50 <= MOUSE_POS[0] <= 50 + i * 50 and 500 <= MOUSE_POS[1] <= 540:
+                                pygame.draw.rect(self.screen, self.dead_cell_color, (10 + i * 50, 500, 40, 40), 5)
+
+            for button in [BACK_BUTTON]:
+                button.change_color(MOUSE_POS)
+                button.update_image()
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit() 
+
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if MOUSE_POS[1] <50:
+                        for button in [BACK_BUTTON]:
+                            if button.rect.collidepoint(MOUSE_POS):
+                                if button == BACK_BUTTON:
+                                    options_menu = False
+                    else:
+                        for i, color in enumerate(color_list):
+                            if 10 + i * 50 <= MOUSE_POS[0] <= 50 + i * 50 and 90 <= MOUSE_POS[1] <= 130:
+                                self.live_cell_color = color
+                                self.grid.set_live_cell_color(color)
+                            if 10 + i * 50 <= MOUSE_POS[0] <= 50 + i * 50 and 500 <= MOUSE_POS[1] <= 540:
+                                self.dead_cell_color = color
+                                self.grid.set_dead_cell_color(color)
+
+
+            pygame.display.update()
+            self.clock.tick(self.FPS)
 
 
     def run_simulation(self):
